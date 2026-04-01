@@ -1,0 +1,71 @@
+{% extends "blog/base.html" %}
+{% block content %}
+
+<article style="border:1px solid #ddd; padding:15px; border-radius:10px; margin-bottom:15px; background:#fff;">
+  
+  <h2 style="margin-bottom:5px;">{{ post.title }}</h2>
+  
+  <p style="color:#555;">{{ post.content }}</p>
+  
+  <small style="color:gray;">
+    👤 {{ post.author }} • {{ post.created_at|date:"F d, Y" }}
+  </small>
+
+</article>
+
+<div style="display:flex; align-items:center; gap:10px; margin-top:10px;">
+  
+  <p style="margin:0;"><strong>{{ post.likes.count }}</strong> likes</p>
+
+  {% if user.is_authenticated %}
+    <form action="{% url 'post-like' post.id %}" method="POST">
+      {% csrf_token %}
+      <button type="submit" 
+        style="border:none; background:none; cursor:pointer; font-size:18px;">
+        
+        {% if is_liked %}
+          ❤️
+        {% else %}
+          🤍
+        {% endif %}
+        
+      </button>
+    </form>
+  {% endif %}
+
+</div>
+
+<hr>
+<h4 style="margin-top:20px;">Comments</h4>
+
+{% for comment in comments %}
+  <div style="display:flex; gap:10px; margin-bottom:10px;">
+    
+    <div style="width:35px; height:35px; border-radius:50%; background:#ccc;"></div>
+    
+    <div style="background:#f1f1f1; padding:8px 12px; border-radius:15px; max-width:70%;">
+      <strong style="font-size:14px;">{{ comment.user }}</strong>
+      <p style="margin:2px 0;">{{ comment.content }}</p>
+    </div>
+
+  </div>
+{% empty %}
+  <p>No comments yet.</p>
+{% endfor %}
+
+{% if user.is_authenticated %}
+  <form method="POST" style="margin-top:10px;">
+    {% csrf_token %}
+    
+    <input type="text" name="content" placeholder="Write a comment..."
+      style="width:70%; padding:8px; border-radius:20px; border:1px solid #ccc;">
+
+    <button type="submit"
+      style="padding:8px 12px; border:none; background:#007bff; color:white; border-radius:20px;">
+      Post
+    </button>
+
+  </form>
+{% endif %}
+
+{% endblock content %}
