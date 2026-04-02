@@ -68,4 +68,14 @@
   </form>
 {% endif %}
 
+{% if user == post.author %}
+  <a href="{% url 'post-update' post.id %}" class="btn btn-sm btn-primary">
+    Edit
+  </a>
+
+  <a href="{% url 'post-delete' post.id %}" class="btn btn-sm btn-danger">
+    Delete
+  </a>
+{% endif %}
+
 {% endblock content %}

@@ -1,11 +1,6 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-<style>
-button:hover {
-  opacity: 0.8;
-}
-</style>
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -16,6 +11,16 @@ button:hover {
         crossorigin="anonymous">
 
   <link rel="stylesheet" type="text/css" href="{% static 'blog/main.css' %}">
+  <style>
+  button:hover {
+    opacity: 0.8;
+  }
+
+  article:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  }
+  </style>
 
   {% if title %}
     <title>Django Blog - {{ title }}</title>
@@ -24,14 +29,15 @@ button:hover {
   {% endif %}
 </head>
 
-<body>
+<body style="background:#eef2f7;">
+  
 
 <header class="site-header">
   <nav class="navbar navbar-expand-md navbar-dark bg-steel fixed-top">
     <div class="container">
 
-      <a class="navbar-brand me-4" href="{% url 'blog-home' %}">
-        Django Blog
+      <a class="navbar-brand me-4 fw-bold" href="{% url 'blog-home' %}">
+        📝 Django Blog
       </a>
 
       <button class="navbar-toggler"
@@ -59,9 +65,14 @@ button:hover {
         <div class="navbar-nav ms-auto">
           {% if user.is_authenticated %}
 
-            <span class="nav-item nav-link">
-              {{ user.username }}
-            </span>
+             <div class="nav-item d-flex align-items-center gap-2">
+
+               <img src="{{ user.profile.image.url }}" 
+                    style="width:35px; height:35px; border-radius:50%; object-fit:cover;">
+
+               <span class="nav-link p-0">{{ user.username }}</span>
+
+              </div>
 
             <form method="POST" action="{% url 'logout' %}" class="d-inline">
               {% csrf_token %}
@@ -104,18 +115,20 @@ button:hover {
     </div>
 
     <div class="col-md-4">
-      <div class="content-section">
-        <h3>Our Sidebar</h3>
-        <p class="text-muted">
-          You can put any information here you'd like.
-        </p>
-        <ul class="list-group">
-          <li class="list-group-item list-group-item-light">Latest Posts</li>
-          <li class="list-group-item list-group-item-light">Announcements</li>
-          <li class="list-group-item list-group-item-light">Calendars</li>
-          <li class="list-group-item list-group-item-light">etc</li>
-        </ul>
-      </div>
+      <div style="
+  background:white;
+  padding:20px;
+  border-radius:12px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.05);
+">
+  <h4 style="margin-bottom:15px;">Sidebar</h4>
+
+  <ul style="list-style:none; padding:0;">
+    <li style="padding:8px 0; border-bottom:1px solid #eee;">Latest Posts</li>
+    <li style="padding:8px 0; border-bottom:1px solid #eee;">Announcements</li>
+    <li style="padding:8px 0; border-bottom:1px solid #eee;">Calendars</li>
+  </ul>
+</div>
     </div>
 
   </div>
