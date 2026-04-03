@@ -78,4 +78,32 @@
   </a>
 {% endif %}
 
+
+<h4>Comments</h4>
+
+{% for comment in comments %}
+  <div style="margin-bottom:10px; padding:8px; border:1px solid #ddd; border-radius:8px;">
+
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      
+      <strong>{{ comment.user }}</strong>
+
+      {% if user == comment.user %}
+        <div>
+          <a href="{% url 'comment-update' comment.pk %}" style="font-size:12px;">Edit</a>
+          |
+          <a href="{% url 'comment-delete' comment.pk %}" style="font-size:12px; color:red;">Delete</a>
+        </div>
+      {% endif %}
+
+    </div>
+
+    <p style="margin:5px 0 0 0;">{{ comment.content }}</p>
+
+  </div>
+
+{% empty %}
+  <p>No comments yet.</p>
+{% endfor %}
+
 {% endblock content %}
