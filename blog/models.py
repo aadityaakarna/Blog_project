@@ -25,7 +25,7 @@ class Comment(models.Model):
     return f'Comment by {self.user}'
   
 class Like(models.Model):
-  post=models.ForeignKey(Post, on_delete=models.CASCADE, related_name='Likes')
+  post=models.ForeignKey(Post, on_delete=models.CASCADE, related_name='likes')
   user=models.ForeignKey(User, on_delete=models.CASCADE)
 
   class Meta:

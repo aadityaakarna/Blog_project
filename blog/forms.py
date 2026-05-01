@@ -11,3 +11,9 @@ class CommentForm(forms.ModelForm):
     model=Comment
     fields=['content']
 
+  def clean_content(self):
+    data=self.cleaned_data['content']
+    if not data.strip():
+      raise forms.ValidationError('Comments cannot be empty')
+    return data
+

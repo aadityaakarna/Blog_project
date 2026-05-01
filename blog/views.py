@@ -5,6 +5,9 @@ from .forms import PostForm, CommentForm
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import UpdateView, DeleteView
 from django.urls import reverse_lazy
+from django.views.decorators.http import require_POST
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseForbidden
 
 def home(request):
     context = {
@@ -46,7 +49,7 @@ def like_post(request, pk):
 
 def post_detail(request, pk):
     post = get_object_or_404(Post, id=pk)
-    comments = post.comments.all()
+    comments = post.comments.all().order_by('-created_at')
 
     # 🔥 Like status
     is_liked = False
@@ -123,3 +126,15 @@ class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
     def get_success_url(self):
         return self.object.post.get_absolute_url()
+
+@login_required
+@require_POST
+def comment_delete_instant(request, pk):
+    comment = get_object_or_404(Comment, pk=pk)
+
+    if comment.user != request.user:
+        return HttpResponseForbidden("You can't delete this comment.")
+
+    post_pk = comment.post.pk
+    comment.delete()
+    return redirect('post-detail', pk=post_pk)

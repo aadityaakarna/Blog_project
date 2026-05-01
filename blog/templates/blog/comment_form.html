@@ -1,0 +1,17 @@
+{% extends "blog/base.html" %}
+
+{% block content %}
+
+<div style="max-width:500px; margin:auto;">
+  <h3>Edit Comment</h3>
+
+  <form method="POST">
+    {% csrf_token %}
+    
+    {{ form.as_p }}
+    
+    <button type="submit" class="btn btn-primary">Update</button>
+  </form>
+</div>
+
+{% endblock %}
