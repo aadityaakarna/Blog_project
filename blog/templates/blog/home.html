@@ -1,33 +1,45 @@
 {% extends "blog/base.html" %}
+{% load static %}
 {% block content %}
   {% for post in posts %}
-     <article style="
-  background:white;
-  padding:20px;
-  border-radius:12px;
-  margin-bottom:20px;
-  box-shadow:0 4px 12px rgba(0,0,0,0.05);
-  transition:0.2s;
-">
+    <article style="
+      background:white;
+      padding:20px;
+      border-radius:12px;
+      margin-bottom:20px;
+      box-shadow:0 4px 12px rgba(0,0,0,0.05);
+      transition:0.2s;
+    ">
 
-  <div style="margin-bottom:10px;">
-    <a href="#" style="font-weight:600; color:#007bff; text-decoration:none;">
-      {{ post.author }}
-    </a>
-    <small style="color:gray;">
-      • {{ post.created_at|date:"M d, Y" }}
-    </small>
-  </div>
+      <div class="d-flex align-items-center gap-2 mb-2">
+        {% if post.author.profile.image %}
+          <img src="{{ post.author.profile.image.url }}?v={{ post.author.profile.image.name }}"
+               alt="avatar"
+               style="width:36px;height:36px;border-radius:50%;object-fit:cover;border:1px solid #ddd;flex:0 0 36px;">
+        {% else %}
+          <img src="{% static 'users/default.jpg' %}"
+               alt="avatar"
+               style="width:36px;height:36px;border-radius:50%;object-fit:cover;border:1px solid #ddd;flex:0 0 36px;">
+        {% endif %}
 
-  <h3 style="margin:5px 0;">
-    <a href="{% url 'post-detail' post.id %}" style="text-decoration:none; color:#222;">
-      {{ post.title }}
-    </a>
-  </h3>
+        <div>
+          <a href="#"
+             style="font-weight:600; color:#007bff; text-decoration:none;">
+            {{ post.author }}
+          </a>
+          <div style="color:gray; font-size:12px;">
+            {{ post.created_at|date:"M d, Y" }}
+          </div>
+        </div>
+      </div>
 
-  <p style="color:#555;">{{ post.content|truncatewords:20 }}</p>
+      <h3 style="margin:5px 0;">
+        <a href="{% url 'post-detail' post.id %}" style="text-decoration:none; color:#222;">
+          {{ post.title }}
+        </a>
+      </h3>
 
-</article>
-
+      <p style="color:#555;">{{ post.content|truncatewords:20 }}</p>
+    </article>
   {% endfor %}
 {% endblock content %}

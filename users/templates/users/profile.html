@@ -1,6 +1,139 @@
 {% extends "blog/base.html" %}
+{% load static %}
 {% load crispy_forms_tags %}
 {% block content %}
-  <h1>{{ user.username }}</h1>
-{% endblock content %}
 
+<style>
+  .ig-card{
+    background:#fff;
+    border:1px solid #e6e6e6;
+    border-radius:14px;
+    padding:20px;
+    box-shadow:0 4px 14px rgba(0,0,0,0.05);
+  }
+  .ig-avatar-wrap{
+    position:relative;
+    width:110px;
+    height:110px;
+    border-radius:50%;
+    overflow:hidden;
+    border:1px solid #ddd;
+    cursor:pointer;
+    flex:0 0 110px;
+  }
+  .ig-avatar-wrap img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
+  }
+  .ig-avatar-overlay{
+    position:absolute;
+    inset:0;
+    background:rgba(0,0,0,0.35);
+    color:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    opacity:0;
+    transition:opacity .2s ease;
+    font-size:13px;
+    font-weight:600;
+    text-align:center;
+    padding:10px;
+  }
+  .ig-avatar-wrap:hover .ig-avatar-overlay{
+    opacity:1;
+  }
+  /* Hide the real file input */
+  #id_image{
+    display:none !important;
+  }
+</style>
+
+<div class="ig-card">
+
+  <div class="d-flex align-items-center gap-3 mb-4">
+    <!-- Clickable avatar -->
+    <div class="ig-avatar-wrap" onclick="openAvatarPicker()" title="Change profile photo">
+
+      {% if user.profile.image %}
+        <img id="avatarPreview"
+             src="{{ user.profile.image.url }}?v={{ user.profile.image.name }}"
+             alt="profile">
+      {% else %}
+        <img id="avatarPreview"
+             src="{% static 'users/default.jpg' %}"
+             alt="profile">
+      {% endif %}
+
+      <div class="ig-avatar-overlay">Change<br>photo</div>
+    </div>
+
+    <div>
+      <h3 class="mb-1">{{ user.username }}</h3>
+      <div class="text-muted">{{ user.email }}</div>
+
+      <div class="mt-2 text-muted">
+        <strong>{{ post_count }}</strong> posts
+      </div>
+
+      <button type="button" class="btn btn-sm btn-outline-secondary mt-2" onclick="openAvatarPicker()">
+        Change profile photo
+      </button>
+    </div>
+  </div>
+
+  <form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <fieldset class="form-group">
+      <legend class="border-bottom mb-3">Edit Profile</legend>
+
+      {{ u_form|crispy }}
+
+      <!-- Render only bio normally -->
+      <div class="mt-2">
+        {{ p_form.bio|as_crispy_field }}
+      </div>
+
+      <!-- Render image field (hidden) so Django receives it -->
+      <input type="file"
+             name="image"
+             id="id_image"
+             accept="image/*"
+             style="display:none;">
+    </fieldset>
+
+    <div class="form-group mt-3 d-flex gap-2">
+      <button class="btn btn-primary" type="submit">Save changes</button>
+      <a class="btn btn-outline-secondary" href="{% url 'blog-home' %}">Cancel</a>
+    </div>
+  </form>
+
+</div>
+
+<script>
+  function openAvatarPicker(){
+    const input = document.getElementById('id_image');
+    if (input) input.click();
+  }
+
+  // Instant preview after selecting file
+  document.addEventListener('DOMContentLoaded', () => {
+    const input = document.getElementById('id_image');
+    const preview = document.getElementById('avatarPreview');
+
+    if (!input || !preview) return;
+
+    input.addEventListener('change', () => {
+      const file = input.files && input.files[0];
+      if (!file) return;
+
+      const url = URL.createObjectURL(file);
+      preview.src = url;
+    });
+  });
+</script>
+
+{% endblock content %}

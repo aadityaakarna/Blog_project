@@ -1,13 +1,28 @@
 {% extends "blog/base.html" %}
+{% load static %}
 {% block content %}
 
 <article class="p-3 mb-3 bg-white border rounded-3" style="box-shadow:0 4px 12px rgba(0,0,0,0.05);">
   <div class="d-flex justify-content-between align-items-start">
-    <div>
-      <h2 class="mb-1">{{ post.title }}</h2>
-      <small class="text-muted">
-        <i class="bi bi-person-fill"></i> {{ post.author }} • {{ post.created_at|date:"F d, Y" }}
-      </small>
+
+    <!-- Post header with author avatar -->
+    <div class="d-flex gap-3 align-items-start">
+      {% if post.author.profile.image %}
+        <img src="{{ post.author.profile.image.url }}?v={{ post.author.profile.image.name }}"
+             alt="avatar"
+             style="width:44px;height:44px;border-radius:50%;object-fit:cover;border:1px solid #ddd;flex:0 0 44px;">
+      {% else %}
+        <img src="{% static 'users/default.jpg' %}"
+             alt="avatar"
+             style="width:44px;height:44px;border-radius:50%;object-fit:cover;border:1px solid #ddd;flex:0 0 44px;">
+      {% endif %}
+
+      <div>
+        <h2 class="mb-1">{{ post.title }}</h2>
+        <small class="text-muted">
+          {{ post.author }} • {{ post.created_at|date:"F d, Y" }}
+        </small>
+      </div>
     </div>
 
     {% if user == post.author %}
@@ -71,7 +86,16 @@
 <div class="mb-3">
   {% for comment in comments %}
     <div class="d-flex gap-2 mb-2 align-items-start">
-      <div style="width:36px; height:36px; border-radius:50%; background:#d9dde3; flex:0 0 36px;"></div>
+      <!-- Commenter avatar -->
+      {% if comment.user.profile.image %}
+        <img src="{{ comment.user.profile.image.url }}?v={{ comment.user.profile.image.name }}"
+             alt="avatar"
+             style="width:36px;height:36px;border-radius:50%;object-fit:cover;border:1px solid #ddd;flex:0 0 36px;">
+      {% else %}
+        <img src="{% static 'users/default.jpg' %}"
+             alt="avatar"
+             style="width:36px;height:36px;border-radius:50%;object-fit:cover;border:1px solid #ddd;flex:0 0 36px;">
+      {% endif %}
 
       <div style="background:#f1f2f4; padding:10px 12px; border-radius:18px; width:100%;">
         <div class="d-flex justify-content-between align-items-center">
