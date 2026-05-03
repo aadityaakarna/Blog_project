@@ -6,12 +6,11 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django.views.decorators.http import require_POST
-from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseForbidden
 
 def home(request):
     context = {
-        'posts': Post.objects.all()
+        'posts': Post.objects.all().order_by('-created_at')
     }
     return render(request, 'blog/home.html', context)
 
@@ -35,6 +34,7 @@ def post_create(request):
 
 
 @login_required
+@require_POST
 def like_post(request, pk):
     post = get_object_or_404(Post, id=pk)
     user = request.user
@@ -47,14 +47,35 @@ def like_post(request, pk):
     return redirect('post-detail', pk=post.id)
 
 
+@login_required
+@require_POST
+def like_comment(request, pk):
+    comment = get_object_or_404(Comment, id=pk)
+    user = request.user
+
+    if comment.likes.filter(id=user.id).exists():
+        comment.likes.remove(user)
+    else:
+        comment.likes.add(user)
+
+    return redirect('post-detail', pk=comment.post.id)
+
+
 def post_detail(request, pk):
     post = get_object_or_404(Post, id=pk)
     comments = post.comments.all().order_by('-created_at')
 
-    # 🔥 Like status
+    # 🔥 Post like status
     is_liked = False
     if request.user.is_authenticated:
         is_liked = Like.objects.filter(post=post, user=request.user).exists()
+
+    # 🔥 Comment like status
+    liked_comment_ids = set()
+    if request.user.is_authenticated:
+        liked_comment_ids = set(
+            Comment.objects.filter(post=post, likes=request.user).values_list('id', flat=True)
+        )
 
     # 🔥 Comment handling
     if request.method == 'POST':
@@ -75,10 +96,12 @@ def post_detail(request, pk):
         'post': post,
         'comments': comments,
         'form': form,
-        'is_liked': is_liked
+        'is_liked': is_liked,
+        'liked_comment_ids': liked_comment_ids,
     }
 
     return render(request, 'blog/post_detail.html', context)
+
 
 class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Post
@@ -101,6 +124,7 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     def test_func(self):
         post = self.get_object()
         return self.request.user == post.author
+
 
 class CommentUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Comment
@@ -126,6 +150,7 @@ class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
     def get_success_url(self):
         return self.object.post.get_absolute_url()
+
 
 @login_required
 @require_POST

@@ -137,8 +137,28 @@
           {{ comment.content }}
         </div>
 
-        <div class="text-muted" style="font-size:12px; margin-top:4px;">
-          {{ comment.created_at|date:"M d, Y • H:i" }}
+        <div class="d-flex align-items-center gap-2 mt-1" style="font-size:12px;">
+          {% if user.is_authenticated %}
+            <form action="{% url 'comment-like' comment.pk %}" method="POST" class="m-0 p-0">
+              {% csrf_token %}
+              <button type="submit"
+                      class="p-0"
+                      style="border:none; background:none; cursor:pointer; line-height:1;">
+                {% if comment.id in liked_comment_ids %}
+                  <i class="bi bi-heart-fill" style="color:#e0245e;"></i>
+                {% else %}
+                  <i class="bi bi-heart" style="color:#111;"></i>
+                {% endif %}
+              </button>
+            </form>
+          {% else %}
+            <a href="{% url 'login' %}" class="text-decoration-none" title="Login to like">
+              <i class="bi bi-heart" style="color:#111;"></i>
+            </a>
+          {% endif %}
+
+          <span class="text-muted">{{ comment.likes.count }} like{{ comment.likes.count|pluralize }}</span>
+          <span class="text-muted">• {{ comment.created_at|date:"M d, Y • H:i" }}</span>
         </div>
       </div>
     </div>
