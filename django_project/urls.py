@@ -21,6 +21,7 @@ from django.urls import path,include
 from users import views as users_views
 from django.conf import settings
 from django.conf.urls.static import static
+from users import views as users_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -29,6 +30,7 @@ urlpatterns = [
     path('login/', auth_views.LoginView.as_view(template_name='users/login.html'),name='login'),
     path('logout/', LogoutView.as_view(http_method_names=['post']),name='logout'),
     path('', include('blog.urls')),
+    path('u/<str:username>/', users_views.public_profile, name='public-profile'),
 ]
 
 if settings.DEBUG:

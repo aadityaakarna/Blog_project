@@ -12,7 +12,7 @@
              alt="avatar"
              style="width:44px;height:44px;border-radius:50%;object-fit:cover;border:1px solid #ddd;flex:0 0 44px;">
       {% else %}
-        <img src="{% static 'users/default.jpg' %}"
+        <img src="{% static 'users/default_v2.jpg' %}"
              alt="avatar"
              style="width:44px;height:44px;border-radius:50%;object-fit:cover;border:1px solid #ddd;flex:0 0 44px;">
       {% endif %}
@@ -20,7 +20,10 @@
       <div>
         <h2 class="mb-1">{{ post.title }}</h2>
         <small class="text-muted">
-          {{ post.author }} • {{ post.created_at|date:"F d, Y" }}
+          <a href="{% url 'public-profile' post.author.username %}" style="text-decoration:none;color:inherit;">
+            {{ post.author }}
+          </a>
+          • {{ post.created_at|date:"F d, Y" }}
         </small>
       </div>
     </div>
@@ -92,14 +95,18 @@
              alt="avatar"
              style="width:36px;height:36px;border-radius:50%;object-fit:cover;border:1px solid #ddd;flex:0 0 36px;">
       {% else %}
-        <img src="{% static 'users/default.jpg' %}"
+        <img src="{% static 'users/default_v2.jpg' %}"
              alt="avatar"
              style="width:36px;height:36px;border-radius:50%;object-fit:cover;border:1px solid #ddd;flex:0 0 36px;">
       {% endif %}
 
       <div style="background:#f1f2f4; padding:10px 12px; border-radius:18px; width:100%;">
         <div class="d-flex justify-content-between align-items-center">
-          <strong style="font-size:14px;">{{ comment.user }}</strong>
+          <strong style="font-size:14px;">
+            <a href="{% url 'public-profile' comment.user.username %}" style="text-decoration:none;color:inherit;">
+              {{ comment.user }}
+            </a>
+          </strong>
 
           {% if user == comment.user %}
             <div style="font-size:12px;" class="d-flex gap-2 align-items-center">

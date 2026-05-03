@@ -1,0 +1,57 @@
+{% extends "blog/base.html" %}
+{% load static %}
+{% block content %}
+
+<div class="ig-card" style="background:#fff;border:1px solid #e6e6e6;border-radius:14px;padding:20px;box-shadow:0 4px 14px rgba(0,0,0,0.05);">
+
+  <div class="d-flex align-items-center gap-3 mb-4">
+    <div style="width:110px;height:110px;border-radius:50%;overflow:hidden;border:1px solid #ddd;flex:0 0 110px;">
+      {% if profile_user.profile.image %}
+        <img src="{{ profile_user.profile.image.url }}?v={{ profile_user.profile.image.name }}"
+             alt="profile"
+             style="width:100%;height:100%;object-fit:cover;">
+      {% else %}
+        <img src="{% static 'users/default_v2.jpg' %}"
+             alt="profile"
+             style="width:100%;height:100%;object-fit:cover;">
+      {% endif %}
+    </div>
+
+    <div>
+      <h3 class="mb-1">{{ profile_user.username }}</h3>
+      <div class="text-muted">{{ profile_user.email }}</div>
+
+      <div class="mt-2 text-muted">
+        <strong>{{ post_count }}</strong> posts
+      </div>
+
+      {% if profile_user.profile.bio %}
+        <div class="mt-2">{{ profile_user.profile.bio }}</div>
+      {% endif %}
+    </div>
+  </div>
+
+</div>
+
+<!-- User posts -->
+<div class="mt-4">
+  <h5 class="mb-3">Posts</h5>
+
+  {% for post in posts %}
+    <article style="background:white;padding:20px;border-radius:12px;margin-bottom:20px;box-shadow:0 4px 12px rgba(0,0,0,0.05);">
+      <h4 class="mb-1">
+        <a href="{% url 'post-detail' post.id %}" style="text-decoration:none;color:#222;">
+          {{ post.title }}
+        </a>
+      </h4>
+      <div class="text-muted" style="font-size:12px;">
+        {{ post.created_at|date:"M d, Y" }}
+      </div>
+      <p style="color:#555;">{{ post.content|truncatewords:20 }}</p>
+    </article>
+  {% empty %}
+    <p class="text-muted">No posts yet.</p>
+  {% endfor %}
+</div>
+
+{% endblock content %}

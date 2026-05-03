@@ -1,9 +1,11 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect,get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login
 from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm
 from blog.models import Post
+from django.contrib.auth.models import User
+
 
 def register(request):
     if request.method == 'POST':
@@ -42,3 +44,14 @@ def profile(request):
         'post_count': post_count
     }
     return render(request, 'users/profile.html', context)
+
+def public_profile(request, username):
+    profile_user = get_object_or_404(User, username=username)
+    posts = Post.objects.filter(author=profile_user).order_by('-created_at')
+    post_count = posts.count()
+
+    return render(request, 'users/public_profile.html', {
+        'profile_user': profile_user,
+        'posts': posts,
+        'post_count': post_count,
+    })

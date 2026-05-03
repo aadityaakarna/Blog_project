@@ -67,11 +67,11 @@
               {% if user.profile.image %}
                 <img src="{{ user.profile.image.url }}?v={{ user.profile.image.name }}"
                      alt="Profile"
-                     style="width:35px; height:35px; border-radius:50%; object-fit:cover;">
+                     style="width:35px; height:35px; border-radius:50%; object-fit:cover; background:#f1f1f1;">
               {% else %}
-                <img src="{% static 'users/default.jpg' %}"
+                <img src="{% static 'users/default_v2.jpg' %}"
                      alt="Profile"
-                     style="width:35px; height:35px; border-radius:50%; object-fit:cover;">
+                     style="width:35px; height:35px; border-radius:50%; object-fit:cover; background:#f1f1f1;">
               {% endif %}
 
               <a class="nav-link p-0" href="{% url 'profile' %}">
