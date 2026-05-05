@@ -28,3 +28,8 @@ jobs:
     - name: Run Tests
       run: |
         python manage.py test
+    - name: Django check
+      run: python manage.py check
+    - name: Migrate
+      run: python manage.py migrate --noinput
+    
